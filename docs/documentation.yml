@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:
+  title: Library Auth API
+  version: 1.0.0
+  description: Kutubxona loyihasi uchun autentifikatsiya API (register, login, verify, logout, password recovery)
+servers:
+  - url: http://localhost:4001/api/auth
+
+paths:
+  /register:
+    post:
+      summary: Foydalanuvchini ro‘yxatdan o‘tkazish
+      description: Yangi foydalanuvchini email orqali OTP bilan ro‘yxatdan o‘tkazadi.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username:
+                  type: string
+                  example: dina123
+                email:
+                  type: string
+                  example: dina@example.com
+                password:
+                  type: string
+                  example: myStrongPassword
+      responses:
+        "200":
+          description: Muvaffaqiyatli ro‘yxatdan o‘tish
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Registered
+        "401":
+          description: Foydalanuvchi allaqachon mavjud
+
+  /verify:
+    post:
+      summary: OTP kodni tekshirish
+      description: Email orqali yuborilgan OTP kodni tekshiradi.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, otp]
+              properties:
+                email:
+                  type: string
+                  example: dina@example.com
+                otp:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: Foydalanuvchi tasdiqlandi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: Verified
+        "401":
+          description: Noto‘g‘ri yoki eskirgan kod
+
+  /login:
+    post:
+      summary: Login qilish
+      description: Tasdiqlangan foydalanuvchini tizimga kiritadi va access token beradi.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: dina@example.com
+                password:
+                  type: string
+                  example: myStrongPassword
+      responses:
+        "200":
+          description: Muvaffaqiyatli login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: Success
+                  access:
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        "401":
+          description: Noto‘g‘ri parol yoki foydalanuvchi tasdiqlanmagan
+
+  /logout:
+    post:
+      summary: Logout qilish
+      description: Foydalanuvchini tizimdan chiqaradi (cookie tozalanadi).
+      responses:
+        "200":
+          description: Muvaffaqiyatli logout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: Logout
+
+  /forgot_password:
+    post:
+      summary: Parolni unutgan foydalanuvchiga OTP yuborish
+      description: Email orqali yangi OTP yuboradi.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  example: dina@example.com
+      responses:
+        "200":
+          description: OTP yuborildi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: Success
+
+  /auth_change_password:
+    post:
+      summary: Parolni yangilash
+      description: Email orqali topilgan foydalanuvchining parolini yangilaydi.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, new_password, confirm_password]
+              properties:
+                email:
+                  type: string
+                  example: dina@example.com
+                new_password:
+                  type: string
+                  example: NewStrongPassword123
+                confirm_password:
+                  type: string
+                  example: NewStrongPassword123
+      responses:
+        "200":
+          description: Parol yangilandi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: Success
+
+  /refresh:
+    get:
+      summary: Tokenni yangilash
+      description: Refresh token orqali yangi access token qaytaradi.
+      responses:
+        "200":
+          description: Yangi access token beriladi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access:
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        "401":
+          description: Refresh token noto‘g‘ri yoki muddati o‘tgan
