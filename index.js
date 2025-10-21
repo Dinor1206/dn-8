@@ -10,9 +10,12 @@ const cookieParser = require("cookie-parser");
 const ProfileRouter = require("./router/profile.routes");
 const AudioBookRouter = require("./router/audio.routes");
 require("dotenv").config();
-const path = require("path");
+const path = require("path")
+
 const app = express();
 const PORT = process.env.PORT || 4001;
+
+
 
 // 📂 static uploads
 app.use("/uploads", express.static("uploads"));

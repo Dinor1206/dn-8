@@ -62,7 +62,7 @@ paths:
                   example: "123456"
       responses:
         "200":
-          description: Foydalanuvchi tasdiqlandi
+          description: Registered
           content:
             application/json:
               schema:
@@ -71,7 +71,7 @@ paths:
                   message:
                     example: Verified
         "401":
-          description: Noto‘g‘ri yoki eskirgan kod
+        description: "Wrong password"
 
   /login:
     post:
